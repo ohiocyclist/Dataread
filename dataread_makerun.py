@@ -323,8 +323,8 @@ class dashclass(Tk.Frame):
         ppandamenu.add_command(label='Add Column', command=self.addcol)
         ppandamenu.add_command(label='Drop Missing', command=self.dropmenu)
         ppandamenu.add_command(label='Rename Column', command=self.renamecol)
-        ppandamenu.add_command(label='Mass Col Rename',
-                               command=self.massrename)
+        # ppandamenu.add_command(label='Mass Col Rename',
+        #                       command=self.massrename)
         ppandamenu.add_command(label='Rename This Table',
                                command=self.newname)
         ppandamenu.add_command(label='Create Time Column',
@@ -334,7 +334,7 @@ class dashclass(Tk.Frame):
         mathmenu.add_command(label='F-Oneway', command=self.anovamenu)
         mathmenu.add_command(label='Mass R^2', command=self.rsqmenu)
         mathmenu.add_command(label='Detect Outliers', command=self.lofmenu)
-        mathmenu.add_command(label='Detect 50/50', command=self.fiftyfiftymenu)
+        # mathmenu.add_command(label='Detect 50/50', command=self.fiftyfiftymenu)
         # mathmenu.add_command(label='Make Cluster Maps', command=self.clusmenu)
         self.menuBar.add_cascade(label='Analysis', menu=mathmenu)
         plotmenu = Tk.Menu(self.menuBar, tearoff=0)
@@ -474,11 +474,11 @@ class dashclass(Tk.Frame):
                 # add bindings for mouseover text
                 self.thisentry[kndex][lldex] \
                     .bind('<Enter>',
-                          lambda x, msg=self.filein.iloc[index, jndex]:
+                          lambda x, msg=screendrawref:
                           self.genericmsg(x, msg))
                 self.thisentry[kndex][lldex] \
                     .bind('<FocusIn>',
-                          lambda x, msg=self.filein.iloc[index, jndex]:
+                          lambda x, msg=screendrawref:
                           self.genericmsg(x, msg))
                 self.thisentry[kndex][lldex] \
                     .bind('<Leave>',
@@ -524,29 +524,8 @@ class dashclass(Tk.Frame):
         self.rowcolind = Tk.Label(master=master, textvariable=self.rowcol)
         self.rowcolind.grid(column=3, row=self.screensize + 8)
 
-        # This default is B27A January 2018
-        self.waterfallorder = ["H", "i", "I", "KA", "Ka", "KE", "Ke", "TS",
-                               "TR", "bb", "Ts", "TT", "Tu", "Tt", "TF", "TB",
-                               "RD", "RC", "RF", "RR", "RP", "RM", "RL", "RS",
-                               "RT", "ST", "SP", "SI", "SJ", "op", "IS", "Rp",
-                               "Rq", "Rk", "RX", "Rx", "RV", "RG", "Da", "mS",
-                               "ms", "nD", "Md", "MD", "Mb", "mD", "md", "XD",
-                               "ME", "nA", "nC", "nc", "nR", "XN", "MN", "JD",
-                               "dU", "dD", "di", "JW", "dd", "RW", "Rw", "Rr",
-                               "qm", "qj", "qn", "qk", "qo", "qa", "qb", "qi",
-                               "qx", "qq", "qy", "qh", "qz", "qc", "qs", "Hd",
-                               "Hi", "N", "ks", "kd", "BA", "Ba", "BC", "Bc",
-                               "Jx", "dx", "Jd", "dW", "dV", "dt", "Jw", "dR",
-                               "kt", "ke", "BT", "BU", "B", "b", "kT", "kE",
-                               "Eu", "XE", "EA", "ED", "FD", "EE", "FE", "Ed",
-                               "Fd", "Ee", "Fe", "be", "BE", "ZB", "fc", "XF",
-                               "Mf", "nE", "ne", "l", "Ox", "OZ", "OX", "O",
-                               "OA", "OB", "OC", "OI", "RU", "Ru", "RQ", "qM",
-                               "qJ", "qN", "qK", "qO", "qA", "qB", "qI", "qX",
-                               "qQ", "qY", "qF", "qH", "qZ", "qC", "qS", "qP",
-                               "qR", "qE", "KO", "Ko", "KI", "Ki", "mX", "mx",
-                               "nF", "nf", "mY", "my", "XY", "MF", "na", "Ot",
-                               "OF", "OU"]
+        # Placeholder, for a possible future waterfall function
+        self.waterfallorder = []
 
     #########################################################################
     def listbox_and_scrollbar(self, parentform, numericcols, column=0, row=1,
@@ -971,6 +950,17 @@ class dashclass(Tk.Frame):
                 self.roback[kndex][lldex] = ""
                 self.thisentry[kndex][lldex].configure(
                         readonlybackground=self.roback[kndex][lldex])
+                self.thisentry[kndex][lldex].bind(
+                        '<Enter>', lambda x,
+                        msg=self.filein.iloc[index, jndex]:
+                        self.genericmsg(x, msg))
+                self.thisentry[kndex][lldex].bind(
+                        '<FocusIn>', lambda x,
+                        msg=self.filein.iloc[index, jndex]:
+                        self.genericmsg(x, msg))
+                self.thisentry[kndex][lldex].bind(
+                        '<Leave>', lambda x,
+                        msg="": self.genericmsg(x, msg))
                 self.thisentry[kndex][lldex].update()
                 lldex += 1
 
@@ -2012,7 +2002,7 @@ class dashclass(Tk.Frame):
                     formfour = Tk.Frame(mlmfigout4)
                     canvastwo = FigureCanvasTkAgg(fig3, master=formfour)
                     plt.subplots_adjust(right=0.8)
-                    canvastwo.show()
+                    canvastwo.draw()
                     canvastwo._tkcanvas.pack(side="top", fill="both", expand=1)
                     toolbar_frame_four = Tk.Frame(formfour)
                     toolbarfour = NavigationToolbar2Tk(canvastwo,
@@ -2051,7 +2041,7 @@ class dashclass(Tk.Frame):
                                 "gout = sm.graphics.plot_ccpr_grid(res)")
                         formrtwo = Tk.Frame(mlmfigout2)
                         canvasth = FigureCanvasTkAgg(fig2, master=formrtwo)
-                        canvasth.show()
+                        canvasth.draw()
                         canvasth._tkcanvas.pack(side="top", fill="both",
                                                 expand=1)
                         toolbar_frame_two = Tk.Frame(formrtwo)
